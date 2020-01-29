@@ -35,9 +35,6 @@ let sketch = function(p) {
 
   p.draw = function() {
     p.background('#222');
-    var x = p.frameCount / 100;
-    var y = Math.sin(x * Math.PI * 2);
-
     p.translate(-offset, -offset);
 
     for (var i = 0; i < number_of_layers; i++) {
