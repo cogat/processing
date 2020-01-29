@@ -1,12 +1,9 @@
-int width = 1000;
-int height = 1000;
-int offset = -100;
+int margin;
 boolean b = true;
 boolean circular_shape = true;
 
-int flow_cell_size = 5;
-int hair_length = 3;
-int number_of_layers = 1;
+int flow_cell_size = 4;
+int hair_length = 2;
 
 int vertical_partitions = 2;
 int horizontal_partitions = 1;
@@ -17,48 +14,49 @@ int horizontal_shift = 200;
 float noise_size = 0.0008;
 float noise_radius = 0.01;
 
-float flow_width = (width + offset * 2.0) / flow_cell_size;
-float flow_height = (height + offset * 2.0) / flow_cell_size;
+int flow_dim;
 
 PVector[][] flow_grid;
 
 float noise_offset_x, noise_offset_y;
 
 void setup() {
-  size(1000, 300);
+  size(800, 800);
+  margin = (int)(width * 0.05);
+    
+  surface.setLocation(0,0);
   surface.setResizable(true);
   smooth();
   stroke(255, 40);
   strokeWeight(1);
+  
+  noise_offset_x = random(10);
+  noise_offset_y = random(10);
+
+  noLoop();
 }
 
 void draw() {
   background(34, 34, 34);
-  translate(-offset, -offset);
+  
+  translate(margin, margin);
 
-  for (int i = 0; i < number_of_layers; i++) {
-    noise_offset_x = random(10);
-    noise_offset_y = random(10);
-    init_flow();
-    display_flow(i);
-  }
-
-  noLoop();
-
+  init_flow();
+  display_flow();  
 }
 
 void init_flow() {
-  flow_grid = new PVector[(int)flow_height][];
-  for (int i = 0; i < flow_height; i++) {
-    PVector[] row = new PVector[(int)flow_width];
-    for (int j = 0; j < flow_width; j++) {
-      row[j] = calculate_flow(
-        (j + vertical_shift * floor((vertical_partitions * j) / flow_height)) * noise_size,
-        (i + horizontal_shift * floor((horizontal_partitions * i) / flow_width)) * noise_size,
+  flow_dim = (height - margin * 2) / flow_cell_size;
+
+  flow_grid = new PVector[flow_dim][flow_dim];
+  for (int i = 0; i < flow_dim; i++) {
+    for (int j = 0; j < flow_dim; j++) {
+      flow_grid[i][j] = calculate_flow(
+        (j + vertical_shift * floor((vertical_partitions * j) / flow_dim)) * noise_size,
+        (i + horizontal_shift * floor((horizontal_partitions * i) / flow_dim)) * noise_size,
         noise_radius
       );
-  }
-    flow_grid[i] = row;
+    }
   }
 }
 
@@ -84,15 +82,15 @@ PVector calculate_flow(float x, float y, float r) {
   return mean_arrow;
 }
 
-void display_flow(int col) {
-  for (int i = 0; i < flow_grid.length; i++) {
-    for (int j = 0; j < flow_grid[i].length; j++) {
+void display_flow() {
+  for (int i = 0; i < flow_dim; i++) {
+    for (int j = 0; j < flow_dim; j++) {
       if (
         !circular_shape ||
         inside_radius(
-          i - flow_grid.length / 2,
-          j - flow_grid[i].length / 2,
-          400.0 / flow_cell_size
+          i - flow_dim / 2,
+          j - flow_dim / 2,
+          flow_dim / 2
         )
       ) {
         line(
@@ -112,7 +110,10 @@ boolean inside_radius(float x, float y, float r) {
 
 void keyPressed() {
   if (keyCode == 32) {
-    save("mySVG.svg");
+    vertical_partitions ++;
+    flow_cell_size++;
+    redraw();
+    //save("mySVG.svg");
     // saveCanvas('noise_grid', 'jpeg');
   }
 };
