@@ -1,9 +1,8 @@
 int margin;
-boolean b = true;
 boolean circular_shape = true;
 
 int flow_cell_size = 4;
-int hair_length = 2;
+float hair_length = 2.0;
 
 int vertical_partitions = 2;
 int horizontal_partitions = 1;
@@ -18,18 +17,25 @@ int flow_dim;
 
 PVector[][] flow_grid;
 
+ControlSurface controls;
+
 float noise_offset_x, noise_offset_y;
 
 void setup() {
+  controls = new ControlSurface(0, 1);
+  listener = new SketchListener();
+  controls.add_knob_listener(listener);
+  controls.add_button_listener(listener);
+
   size(800, 800);
   margin = (int)(width * 0.05);
-    
+
   surface.setLocation(0,0);
   surface.setResizable(true);
   smooth();
   stroke(255, 40);
   strokeWeight(1);
-  
+
   noise_offset_x = random(10);
   noise_offset_y = random(10);
 
@@ -38,11 +44,11 @@ void setup() {
 
 void draw() {
   background(34, 34, 34);
-  
+
   translate(margin, margin);
 
   init_flow();
-  display_flow();  
+  display_flow();
 }
 
 void init_flow() {

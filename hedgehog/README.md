@@ -6,13 +6,6 @@ Adapted from https://github.com/kgolid/hedgehog
 
 TODO
 ====
-factor out and incorporate midi controller
-    - vertical/horizontal shift
-    - cell size
-    - hair length
-    - noise size / radius
-    - vertical / horiz partitions
-
 factor out and incorporate save/load settings
 factor out and incorporate svg exporter
 factor out and incorporate help text + status display
