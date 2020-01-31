@@ -1,4 +1,12 @@
+
+
 class SketchListener implements KnobListener, ButtonListener {
+  PApplet applet;
+
+  SketchListener(PApplet applet) {
+    this.applet = applet;
+  }
+
   void on_knob_change(int channel, int delta) {
     // int d_2 = delta * delta * (int) Math.signum(delta);
     switch (channel) {
@@ -61,7 +69,7 @@ class SketchListener implements KnobListener, ButtonListener {
       case 5:
         break;
       case 6:
-        save_settings(date_string()+".json");
+        save_settings("data/" + applet.getClass().getName() + "-" + date_string() + ".json");
         return false;
       case 7:
         break;
@@ -93,12 +101,7 @@ class SketchListener implements KnobListener, ButtonListener {
   void save_settings(String filename) {
     JSONObject json = new JSONObject();
 
-    // json.setInt("num_dots", num_dots);
-    // json.setFloat("track_length", track_length);
-    // json.setInt("x_offset", x_offset);
-    // json.setInt("y_offset", y_offset);
-    // json.setBoolean("use_lines", use_lines);
-
+    json.setInt("testvar", testvar);
     // json.setJSONArray("pendula", pcontroller.to_json());
 
     saveJSONObject(json, filename);
@@ -106,21 +109,17 @@ class SketchListener implements KnobListener, ButtonListener {
   }
 
   void load_settings() {
-      selectInput("Select a file to load:", "_fileSelected");
+      selectInput("Select a settings file to load:", "_fileSelected", null, this);
   }
 
-  void _fileSelected(File selection) {
+  public void _fileSelected(File selection) {
     if (selection != null) {
       JSONObject json = loadJSONObject(selection.getAbsolutePath());
-      // num_dots = json.getInt("num_dots");
-      // track_length = json.getFloat("track_length");
-      // x_offset = json.getInt("x_offset");
-      // y_offset = json.getInt("y_offset");
-      // use_lines = json.getBoolean("use_lines");
+      testvar = json.getInt("testvar");
       // pcontroller.from_json(json.getJSONArray("pendula"));
     }
   }
 }
 
-SketchListener listener;
+public SketchListener listener;
 

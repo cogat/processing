@@ -18,9 +18,9 @@ public class ControlSurface {
 
 
   ControlSurface(int in_device, int out_device) {
-    MidiBus.list();
+    // MidiBus.list();
     midibus = new MidiBus(this, in_device, out_device);
-    for (int i=0; i<127; i++) {
+    for (int i=0; i<16; i++) {
        midibus.sendNoteOff(0, i, 0);
     }
   }

@@ -7,7 +7,7 @@ int testvar = 100;
 
 void setup() {
   controls = new ControlSurface(0, 1);
-  listener = new SketchListener();
+  listener = new SketchListener(this);
   controls.add_knob_listener(listener);
   controls.add_button_listener(listener);
 
