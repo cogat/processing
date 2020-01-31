@@ -23,7 +23,7 @@ float noise_offset_x, noise_offset_y;
 
 void setup() {
   controls = new ControlSurface(0, 1);
-  listener = new SketchListener();
+  listener = new SketchListener(this);
   controls.add_knob_listener(listener);
   controls.add_button_listener(listener);
 
@@ -93,7 +93,7 @@ boolean inside_radius(float x, float y, float r) {
 boolean inside_heart(float x, float y) {
   y = -y + 0.2; // invert and vertical shift
   float result = pow(x * x + y * y - 1, 3) - x * x * y * y * y;
-  return result <= 0; 
+  return result <= 0;
 }
 
 boolean in_mask(int x, int y) {

@@ -1,6 +1,6 @@
 
 
-class SketchListener implements KnobListener, ButtonListener {
+public class SketchListener implements KnobListener, ButtonListener {
   PApplet applet;
 
   SketchListener(PApplet applet) {
@@ -13,6 +13,7 @@ class SketchListener implements KnobListener, ButtonListener {
       case 0:
         testvar += delta;
         break;
+      // row 1
       case 1:
         break;
       case 2:
@@ -29,6 +30,7 @@ class SketchListener implements KnobListener, ButtonListener {
         break;
       case 8:
         break;
+      // row 2
       case 9:
         break;
       case 10:
@@ -56,6 +58,7 @@ class SketchListener implements KnobListener, ButtonListener {
     // if 'value' is true, return false to turn the button off (momentary)
     // if 'value' is false, return true to turn the button on (reverse momentary)
     switch(button) {
+      // row 1
       case 0:
         break;
       case 1:
@@ -109,10 +112,10 @@ class SketchListener implements KnobListener, ButtonListener {
   }
 
   void load_settings() {
-      selectInput("Select a settings file to load:", "_fileSelected", null, this);
+      selectInput("Select a settings file to load:", "_apply_settings", null, this);
   }
 
-  public void _fileSelected(File selection) {
+  public void _apply_settings(File selection) {
     if (selection != null) {
       JSONObject json = loadJSONObject(selection.getAbsolutePath());
       testvar = json.getInt("testvar");
@@ -121,5 +124,5 @@ class SketchListener implements KnobListener, ButtonListener {
   }
 }
 
-public SketchListener listener;
+SketchListener listener;
 

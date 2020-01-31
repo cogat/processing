@@ -3,6 +3,6 @@ libraries
 modes
 tools
 
-data/*.json
-data/*.svg
-data/*.gcode
+*/data/*.json
+*/data/*.svg
+*/data/*.gcode
