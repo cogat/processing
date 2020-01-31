@@ -1,5 +1,5 @@
 int margin;
-boolean circular_shape = true;
+String shape = "heart";
 
 int flow_cell_size = 4;
 float hair_length = 2.0;
@@ -44,9 +44,7 @@ void setup() {
 
 void draw() {
   background(34, 34, 34);
-
   translate(margin, margin);
-
   init_flow();
   display_flow();
 }
@@ -88,30 +86,52 @@ PVector calculate_flow(float x, float y, float r) {
   return mean_arrow;
 }
 
+boolean inside_radius(float x, float y, float r) {
+  return sqrt(x * x + y * y) < r;
+}
+
+boolean inside_heart(float x, float y) {
+  y = -(y-0.2); // invert and vertical shift
+  float result = pow(x * x + y * y - 1, 3) - x * x * y * y * y;
+  return result <= 0; 
+}
+
+boolean in_mask(int x, int y) {
+  int f_2 = flow_dim / 2;
+  switch (shape) {
+    case "circle":
+      return inside_radius(
+        x - f_2,
+        y - f_2,
+        flow_dim / 2
+      );
+    case "heart":
+      // map 0..flow_dim to -2..2
+      float scale = 1.3;
+      return inside_heart(
+        2 * scale * x / flow_dim - scale,
+        2 * scale * y / flow_dim - scale
+      );
+    default:
+      return true;
+  }
+}
+
 void display_flow() {
-  for (int i = 0; i < flow_dim; i++) {
-    for (int j = 0; j < flow_dim; j++) {
+  for (int y = 0; y < flow_dim; y++) {
+    for (int x = 0; x < flow_dim; x++) {
       if (
-        !circular_shape ||
-        inside_radius(
-          i - flow_dim / 2,
-          j - flow_dim / 2,
-          flow_dim / 2
-        )
+        in_mask(x, y)
       ) {
         line(
-          j * flow_cell_size,
-          i * flow_cell_size,
-          j * flow_cell_size + flow_grid[i][j].x * hair_length * 2500,
-          i * flow_cell_size + flow_grid[i][j].y * hair_length * 2500
+          x * flow_cell_size,
+          y * flow_cell_size,
+          x * flow_cell_size + flow_grid[y][x].x * hair_length * 2500,
+          y * flow_cell_size + flow_grid[y][x].y * hair_length * 2500
         );
       }
     }
   }
-}
-
-boolean inside_radius(float x, float y, float r) {
-  return sqrt(x * x + y * y) < r;
 }
 
 void keyPressed() {

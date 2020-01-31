@@ -56,7 +56,17 @@ class SketchListener implements KnobListener, ButtonListener {
   void on_button_change(int button, boolean value) {
     switch(button) {
       case 0:
-        circular_shape = value;
+        switch (shape) {
+          case "circle":
+            shape = "square";
+            break;
+          case "square":
+            shape = "heart";
+            break;
+          case "heart":
+            shape = "circle";
+            break;
+        };
         break;
       case 1:
         break;
