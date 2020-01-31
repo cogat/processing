@@ -43,7 +43,10 @@ class SketchListener implements KnobListener, ButtonListener {
     }
   }
 
-  void on_button_change(int button, boolean value) {
+  boolean on_button_change(int button, boolean value) {
+    // buttons latch by default
+    // if 'value' is true, return false to turn the button off (momentary)
+    // if 'value' is false, return true to turn the button on (reverse momentary)
     switch(button) {
       case 0:
         break;
@@ -58,14 +61,66 @@ class SketchListener implements KnobListener, ButtonListener {
       case 5:
         break;
       case 6:
-        break;
+        save_settings(date_string()+".json");
+        return false;
       case 7:
+        break;
+      // row 2
+      case 8:
+        break;
+      case 9:
+        break;
+      case 10:
+        break;
+      case 11:
+        break;
+      case 12:
+        break;
+      case 13:
+        break;
+      case 14:
+        load_settings();
+        return false;
+      case 15:
         break;
       default:
         println("unmapped button " + button + ": " + value);
         break;
     }
+    return value;
+  }
+
+  void save_settings(String filename) {
+    JSONObject json = new JSONObject();
+
+    // json.setInt("num_dots", num_dots);
+    // json.setFloat("track_length", track_length);
+    // json.setInt("x_offset", x_offset);
+    // json.setInt("y_offset", y_offset);
+    // json.setBoolean("use_lines", use_lines);
+
+    // json.setJSONArray("pendula", pcontroller.to_json());
+
+    saveJSONObject(json, filename);
+    println("Saved "+filename);
+  }
+
+  void load_settings() {
+      selectInput("Select a file to load:", "_fileSelected");
+  }
+
+  void _fileSelected(File selection) {
+    if (selection != null) {
+      JSONObject json = loadJSONObject(selection.getAbsolutePath());
+      // num_dots = json.getInt("num_dots");
+      // track_length = json.getFloat("track_length");
+      // x_offset = json.getInt("x_offset");
+      // y_offset = json.getInt("y_offset");
+      // use_lines = json.getBoolean("use_lines");
+      // pcontroller.from_json(json.getJSONArray("pendula"));
+    }
   }
 }
 
 SketchListener listener;
+

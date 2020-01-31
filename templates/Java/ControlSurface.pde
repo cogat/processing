@@ -7,7 +7,7 @@ public interface KnobListener {
 }
 
 public interface ButtonListener {
-  void on_button_change(int button, boolean state);
+  boolean on_button_change(int button, boolean state);
 }
 
 public class ControlSurface {
@@ -15,7 +15,7 @@ public class ControlSurface {
 
   ArrayList<KnobListener> knob_listeners = new ArrayList<KnobListener>();
   ArrayList<ButtonListener> button_listeners = new ArrayList<ButtonListener>();
-  
+
 
   ControlSurface(int in_device, int out_device) {
     MidiBus.list();
@@ -24,11 +24,11 @@ public class ControlSurface {
        midibus.sendNoteOff(0, i, 0);
     }
   }
-  
+
   public void add_knob_listener(KnobListener obj) {
     knob_listeners.add(obj);
   }
-  
+
   public void add_button_listener(ButtonListener obj) {
      button_listeners.add(obj);
   }
@@ -41,14 +41,16 @@ public class ControlSurface {
     //println("Channel:"+note.channel());
     //println("Pitch:"+note.pitch());
     //println("Velocity:"+note.velocity());
-    
-    Iterator it = button_listeners.iterator(); 
+
+    Iterator it = button_listeners.iterator();
     while (it.hasNext()) {
       ButtonListener bl = (ButtonListener) it.next();
-      bl.on_button_change(note.pitch(), true); 
+      if (!bl.on_button_change(note.pitch(), true)) {
+          midibus.sendNoteOff(0, note.pitch(), 0);
+      };
     }
   }
-  
+
   public void noteOff(Note note) {
     // Receive a noteOff
     //println();
@@ -57,19 +59,21 @@ public class ControlSurface {
     //println("Channel:"+note.channel());
     //println("Pitch:"+note.pitch());
     //println("Velocity:"+note.velocity());
-    
-    Iterator it = button_listeners.iterator(); 
+
+    Iterator it = button_listeners.iterator();
     while (it.hasNext()) {
       ButtonListener bl = (ButtonListener) it.next();
-      bl.on_button_change(note.pitch(), false); 
+      if (bl.on_button_change(note.pitch(), false)) {
+          midibus.sendNoteOn(0, note.pitch(), 0);
+      };
     }
-    
+
     //for (int i=0; i<button_listeners.size(); i++) {
     //   button_listeners.get(i).on_button_change(note.pitch(), false);
     //}
 
   }
-  
+
   public void controllerChange(ControlChange change) {
     // Receive a controllerChange
     //println();
@@ -78,11 +82,11 @@ public class ControlSurface {
     //println("Channel:"+change.channel());
     //println("Number:"+change.number());
     //println("Value:"+change.value());
-    
-    Iterator it = knob_listeners.iterator(); 
+
+    Iterator it = knob_listeners.iterator();
     while (it.hasNext()) {
       KnobListener kl = (KnobListener) it.next();
-      kl.on_knob_change(change.number(), change.value() - 64); 
+      kl.on_knob_change(change.number(), change.value() - 64);
     }
   }
 }
