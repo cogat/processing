@@ -72,7 +72,9 @@ public class SketchListener implements KnobListener, ButtonListener {
       case 5:
         break;
       case 6:
-        save_settings("data/" + applet.getClass().getName() + "-" + date_string() + ".json");
+        String name = "data/" + applet.getClass().getName() + "-" + date_string();
+        save_settings(name + ".json");
+        save_svg(name + ".svg");
         return false;
       case 7:
         break;
@@ -122,7 +124,24 @@ public class SketchListener implements KnobListener, ButtonListener {
       // pcontroller.from_json(json.getJSONArray("pendula"));
     }
   }
+
+  void save_svg(String filename) {
+    svg_graphics = createGraphics(width, height, SVG, filename);
+    svg_graphics.beginDraw();
+
+    draw_frame(svg_graphics);
+
+    svg_graphics.dispose();
+    svg_graphics.endDraw();
+    println("Saved "+filename);
+    }
+
 }
 
 SketchListener listener;
 
+void keyPressed() { // hack to use keys without midi
+  if ('0' <= key && key <= '9') {
+    listener.on_button_change(keyCode-48, true);
+  }
+}

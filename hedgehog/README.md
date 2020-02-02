@@ -6,7 +6,7 @@ Adapted from https://github.com/kgolid/hedgehog
 
 TODO
 ====
-factor out and incorporate save/load settings
-factor out and incorporate svg exporter
+use a random seed
+update/tune randomness
 factor out and incorporate help text + status display
 

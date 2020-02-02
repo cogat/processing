@@ -1,3 +1,6 @@
+import java.lang.Math;
+import processing.svg.*;
+
 int margin;
 String shape = "heart";
 
@@ -21,20 +24,22 @@ ControlSurface controls;
 
 float noise_offset_x, noise_offset_y;
 
+PGraphics default_graphics;
+PGraphics svg_graphics;
+
 void setup() {
   controls = new ControlSurface(0, 1);
   listener = new SketchListener(this);
   controls.add_knob_listener(listener);
   controls.add_button_listener(listener);
 
+  default_graphics = g;
+
   size(800, 800);
   margin = (int)(width * 0.05);
 
   surface.setLocation(0,0);
   surface.setResizable(true);
-  smooth();
-  stroke(255, 40);
-  strokeWeight(1);
 
   noise_offset_x = random(10);
   noise_offset_y = random(10);
@@ -43,10 +48,17 @@ void setup() {
 }
 
 void draw() {
-  background(34, 34, 34);
-  translate(margin, margin);
+  draw_frame(default_graphics);
+}
+
+void draw_frame(PGraphics g) {
+  g.stroke(255, 40);
+  g.strokeWeight(1);
+
+  g.background(34, 34, 34);
+  g.translate(margin, margin);
   init_flow();
-  display_flow();
+  display_flow(g);
 }
 
 void init_flow() {
@@ -117,13 +129,13 @@ boolean in_mask(int x, int y) {
   }
 }
 
-void display_flow() {
+void display_flow(PGraphics g) {
   for (int y = 0; y < flow_dim; y++) {
     for (int x = 0; x < flow_dim; x++) {
       if (
         in_mask(x, y)
       ) {
-        line(
+        g.line(
           x * flow_cell_size,
           y * flow_cell_size,
           x * flow_cell_size + flow_grid[y][x].x * hair_length * 2500,
@@ -133,13 +145,3 @@ void display_flow() {
     }
   }
 }
-
-void keyPressed() {
-  if (keyCode == 32) {
-    vertical_partitions ++;
-    flow_cell_size++;
-    redraw();
-    //save("mySVG.svg");
-    // saveCanvas('noise_grid', 'jpeg');
-  }
-};
