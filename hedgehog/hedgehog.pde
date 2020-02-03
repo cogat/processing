@@ -29,24 +29,21 @@ ControlSurface controls;
 PGraphics default_graphics;
 PGraphics svg_graphics;
 
+PApplet applet;
+
 void setup() {
-  controls = new ControlSurface(0, 1);
-  listener = new SketchListener(this);
-  controls.add_knob_listener(listener);
-  controls.add_button_listener(listener);
-
+  applet = this;
+  init_ui();
   default_graphics = g;
-
   size(800, 800);
-
   surface.setLocation(0,0);
   surface.setResizable(true);
-
   noLoop();
 }
 
 void draw() {
   background(34, 34, 34); // don't draw this on the svg
+  stroke(255, 40);
   draw_frame(default_graphics);
 }
 
@@ -54,7 +51,6 @@ void draw_frame(PGraphics g) {
   randomSeed(seed);
   noiseSeed(seed);
   noiseDetail(noise_lod, noise_falloff);
-  g.stroke(255, 40);
   g.strokeWeight(1);
 
   g.translate((width - size) / 2, (height - size) / 2);
