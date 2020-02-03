@@ -8,7 +8,7 @@ public class SketchListener implements KnobListener, ButtonListener {
   }
 
   void on_knob_change(int channel, int delta) {
-    // int d_2 = delta * delta * (int) Math.signum(delta);
+    int d_2 = delta * delta * (int) Math.signum(delta); // use d_2 for more acceleration
     switch (channel) {
       case 0:
         testvar += delta;
@@ -57,10 +57,9 @@ public class SketchListener implements KnobListener, ButtonListener {
     // buttons latch by default
     // if 'value' is true, return false to turn the button off (momentary)
     // if 'value' is false, return true to turn the button on (reverse momentary)
+    button += 1; // control surface buttons are 1-based
     switch(button) {
       // row 1
-      case 0:
-        break;
       case 1:
         break;
       case 2:
@@ -72,15 +71,15 @@ public class SketchListener implements KnobListener, ButtonListener {
       case 5:
         break;
       case 6:
+        break;
+      case 7:
         String name = "data/" + applet.getClass().getName() + "-" + date_string();
         save_settings(name + ".json");
         save_svg(name + ".svg");
         return false;
-      case 7:
-        break;
-      // row 2
       case 8:
         break;
+      // row 2
       case 9:
         break;
       case 10:
@@ -92,9 +91,11 @@ public class SketchListener implements KnobListener, ButtonListener {
       case 13:
         break;
       case 14:
+        break;
+      case 15:
         load_settings();
         return false;
-      case 15:
+      case 16:
         break;
       default:
         println("unmapped button " + button + ": " + value);

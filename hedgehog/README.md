@@ -6,7 +6,5 @@ Adapted from https://github.com/kgolid/hedgehog
 
 TODO
 ====
-use a random seed
-update/tune randomness
 factor out and incorporate help text + status display
 

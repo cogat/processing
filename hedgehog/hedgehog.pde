@@ -1,8 +1,8 @@
 import java.lang.Math;
 import processing.svg.*;
 
-int margin;
-String shape = "heart";
+int size = 720;
+String shape = "circle";
 
 int flow_cell_size = 4;
 float hair_length = 2.0;
@@ -18,11 +18,13 @@ float noise_radius = 0.01;
 
 int flow_dim;
 
+int seed = (int) new Date().getTime();
+int noise_lod = 8;
+float noise_falloff = 0.5;
+
 PVector[][] flow_grid;
 
 ControlSurface controls;
-
-float noise_offset_x, noise_offset_y;
 
 PGraphics default_graphics;
 PGraphics svg_graphics;
@@ -36,33 +38,32 @@ void setup() {
   default_graphics = g;
 
   size(800, 800);
-  margin = (int)(width * 0.05);
 
   surface.setLocation(0,0);
   surface.setResizable(true);
-
-  noise_offset_x = random(10);
-  noise_offset_y = random(10);
 
   noLoop();
 }
 
 void draw() {
+  background(34, 34, 34); // don't draw this on the svg
   draw_frame(default_graphics);
 }
 
 void draw_frame(PGraphics g) {
+  randomSeed(seed);
+  noiseSeed(seed);
+  noiseDetail(noise_lod, noise_falloff);
   g.stroke(255, 40);
   g.strokeWeight(1);
 
-  g.background(34, 34, 34);
-  g.translate(margin, margin);
+  g.translate((width - size) / 2, (height - size) / 2);
   init_flow();
   display_flow(g);
 }
 
 void init_flow() {
-  flow_dim = (height - margin * 2) / flow_cell_size;
+  flow_dim = size / flow_cell_size;
 
   flow_grid = new PVector[flow_dim][flow_dim];
   for (int i = 0; i < flow_dim; i++) {
@@ -84,8 +85,8 @@ PVector calculate_flow(float x, float y, float r) {
     PVector pos1 = new PVector(x + cos(angle) * r, y + sin(angle) * r);
     PVector pos2 = new PVector(x + cos(angle + PI) * r, y + sin(angle + PI) * r);
 
-    float val1 = noise(noise_offset_x + pos1.x, noise_offset_y + pos1.y);
-    float val2 = noise(noise_offset_x + pos2.x, noise_offset_y + pos2.y);
+    float val1 = noise(pos1.x, pos1.y);
+    float val2 = noise(pos2.x, pos2.y);
 
     PVector hilo = PVector.sub(pos1, pos2)
       .normalize()

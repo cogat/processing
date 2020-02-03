@@ -25,6 +25,7 @@ public class SketchListener implements KnobListener, ButtonListener {
         hair_length += delta / 10.0;
         break;
       case 5:
+        noise_lod += delta;
         break;
       case 6:
         break;
@@ -43,9 +44,10 @@ public class SketchListener implements KnobListener, ButtonListener {
         noise_radius += delta * 0.001;
         break;
       case 12:
-        margin += delta;
+        size += d_2;
         break;
       case 13:
+        noise_falloff += d_2 * 0.01;
         break;
       case 14:
         break;
@@ -64,9 +66,10 @@ public class SketchListener implements KnobListener, ButtonListener {
     // buttons latch by default
     // if 'value' is true, return false to turn the button off (momentary)
     // if 'value' is false, return true to turn the button on (reverse momentary)
+    button += 1; // the control surface print is 1-based
     switch(button) {
       // row 1
-      case 0:
+      case 1:
         switch (shape) {
           case "circle":
             shape = "square";
@@ -79,8 +82,6 @@ public class SketchListener implements KnobListener, ButtonListener {
             break;
         };
         break;
-      case 1:
-        break;
       case 2:
         break;
       case 3:
@@ -90,16 +91,17 @@ public class SketchListener implements KnobListener, ButtonListener {
       case 5:
         break;
       case 6:
+        break;
+      case 7:
         String name = "data/" + applet.getClass().getName() + "-" + date_string();
         save_settings(name + ".json");
         save_svg(name + ".svg");
         return false;
-      case 7:
-        break;
-      // row 2
       case 8:
         break;
+      // row 2
       case 9:
+        seed = (int) new Date().getTime();
         break;
       case 10:
         break;
@@ -110,9 +112,11 @@ public class SketchListener implements KnobListener, ButtonListener {
       case 13:
         break;
       case 14:
+        break;
+      case 15:
         load_settings();
         return false;
-      case 15:
+      case 16:
         break;
       default:
         println("unmapped button " + button + ": " + value);
@@ -134,7 +138,10 @@ public class SketchListener implements KnobListener, ButtonListener {
     json.setFloat("noise_size", noise_size);
     json.setFloat("noise_radius", noise_radius);
     json.setFloat("hair_length", hair_length);
-    json.setInt("margin", margin);
+    json.setInt("size", size);
+    json.setInt("noise_lod", noise_lod);
+    json.setFloat("noise_falloff", noise_falloff);
+    json.setInt("seed", seed);
     // json.setJSONArray("pendula", pcontroller.to_json());
 
     saveJSONObject(json, filename);
@@ -158,7 +165,10 @@ public class SketchListener implements KnobListener, ButtonListener {
       noise_size = json.getFloat("noise_size");
       noise_radius = json.getFloat("noise_radius");
       hair_length = json.getFloat("hair_length");
-      margin = json.getInt("margin");
+      size = json.getInt("size");
+      noise_lod = json.getInt("noise_lod");
+      noise_falloff = json.getFloat("noise_falloff");
+      seed = json.getInt("seed");
       redraw();
     }
   }
