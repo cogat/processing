@@ -1,26 +1,28 @@
-Knob[] knobs = new Knob[17];
-Button[] buttons = new Button[17];
+PFont pFont;
 
 void init_ui() {
+  pFont = createFont("Monaco", 9, false);
   controls = new ControlSurface(0, 1);
   
   knobs[0] = new Knob(0, this, "flow_cell_size");
-  knobs[1] = new Knob(1, this, "vertical_shift");
-  knobs[2] = new Knob(2, this, "vertical_partitions");
+  knobs[1] = new Knob(1, this, "vertical_partitions");
+  knobs[2] = new Knob(2, this, "vertical_shift");
   knobs[3] = new Knob2(3, this, "noise_size", 0.001);
-  knobs[4] = new Knob(4, this, "hair_length", 0.1);
-  knobs[5] = new Knob(5, this, "noise_lod");
-  
-  knobs[9] = new Knob(9, this, "horizontal_shift");
-  knobs[10] = new Knob(10, this, "horizontal_partitions");
+  knobs[4] = new Knob(4, this, "noise_lod");
+  knobs[5] = new Knob(5, this, "hair_length", 0.1);
+  //row 2
+  knobs[9] = new Knob(9, this, "horizontal_partitions");
+  knobs[10] = new Knob(10, this, "horizontal_shift");
   knobs[11] = new Knob(11, this, "noise_radius", 0.001);
-  knobs[12] = new Knob2(12, this, "size");
-  knobs[13] = new Knob2(13, this, "noise_falloff", 0.01);
+  knobs[12] = new Knob2(12, this, "noise_falloff", 0.01);
+  knobs[13] = new Knob2(13, this, "size");
   
   buttons[1] = new Button(1, this, "cycle_shape");
   buttons[7] = new Button(7, this, "save");
+  //row 2
   buttons[9] = new Button(9, this, "new_seed");
   buttons[15] = new Button(15, this, "load");
+  buttons[16] = new Button(16, this, "help");
 }
 
 boolean cycle_shape(boolean value) {
@@ -53,6 +55,11 @@ boolean load(boolean value) {
 boolean new_seed(boolean value) {
   seed = (int) new Date().getTime();
   return false;
+}
+
+boolean help(boolean value) {
+  show_help = value;
+  return value;
 }
 
 void save_settings(String filename) {

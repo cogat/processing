@@ -22,6 +22,8 @@ int seed = (int) new Date().getTime();
 int noise_lod = 8;
 float noise_falloff = 0.5;
 
+boolean show_help = false;
+
 PVector[][] flow_grid;
 
 ControlSurface controls;
@@ -45,6 +47,7 @@ void draw() {
   background(34, 34, 34); // don't draw this on the svg
   stroke(255, 40);
   draw_frame(default_graphics);
+  if (show_help) draw_help(default_graphics);
 }
 
 void draw_frame(PGraphics g) {
@@ -56,6 +59,7 @@ void draw_frame(PGraphics g) {
   g.translate((width - size) / 2, (height - size) / 2);
   init_flow();
   display_flow(g);
+  g.translate(-(width - size) / 2, -(height - size) / 2);
 }
 
 void init_flow() {

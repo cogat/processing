@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.lang.reflect.*;
 
+Knob[] knobs = new Knob[17];
+Button[] buttons = new Button[17];
+
 
 public interface KnobListener {
   void on_knob_change(int knob, int delta);
@@ -117,20 +120,13 @@ class Knob implements KnobListener {
   void on_knob_change(int channel, int delta) {
     if (channel==this.knob_number) {
       Object v = get_value();
-      println(v.getClass().getName());
       if (v instanceof java.lang.Integer) {
         set_value((int) v + (int) (delta * factor));
       } else if (v instanceof java.lang.Float) {
         set_value((float) v + delta * factor);        
-      }
-      
-      println(get_help());
+      }      
       redraw();
     }
-  }
-
-  String get_help() {
-    return this.knob_number + ": " + get_name() + "\n" + get_value();
   }
 }
 
@@ -182,7 +178,6 @@ class Button implements ButtonListener {
     if (button_number==this.button_number) {
       try {
         v = (boolean) m.invoke(obj, value);
-        println(get_help());
         redraw();
       } catch (Exception e) {
          println(e.toString());
@@ -190,8 +185,172 @@ class Button implements ButtonListener {
     }
     return v;
   }
+}
 
-  String get_help() {
-    return this.button_number + ": " + get_name();
+void draw_help(PGraphics g) {
+  g.fill(255);
+  g.textFont(pFont, 9);
+  g.textLeading(9);
+  g.textAlign(RIGHT, BOTTOM);
+  String s = knobs_help() + "\n" + buttons_help();
+  g.text(s, 10, 10, g.width - 20, g.height - 20);
+}
+
+String knobs_help() {
+  int num_columns = 9, num_rows = 2;
+  int[][] numbers = new int[num_columns][num_rows];
+  String[][] names = new String[num_columns][num_rows];
+  String[][] values = new String[num_columns][num_rows];
+  int[][] lengths = new int[num_columns][num_rows];
+  
+  // populate array of strings to show
+  int knob_number = -1;
+  for (int row=0; row < num_rows; row ++) {
+    for (int col=0; col < num_columns; col++) {
+      if (col == 0 && row > 0) { // only the first row gets an extra knob 0
+        numbers[col][row] = -1;
+        names[col][row] = "";
+        values[col][row] = "";
+        lengths[col][row] = 0;
+        continue;
+      }
+      
+      knob_number ++;
+      numbers[col][row] = knob_number;
+      try {
+        Knob k = knobs[knob_number];
+        names[col][row] = k.get_name();
+        values[col][row] = "" + k.get_value();
+      } catch (Exception e) {
+        names[col][row] = "";
+        values[col][row] = "";
+      }
+      lengths[col][row] = max(names[col][row].length(), values[col][row].length());
+    }
   }
+  // align the lengths of each column in the 2 rows
+  for (int row=0; row < num_rows; row ++) {
+    for (int col=0; col < num_columns; col++) {
+      lengths[col][row] = max(lengths[col][0], lengths[col][1], 2);
+    }
+  }
+
+  String s = "";
+  
+  for (int row=0; row < num_rows; row++) {
+    
+    // draw top line
+    for (int col=0; col < num_columns; col++) {
+      if (numbers[col][row] == -1) continue;
+      if (col==0) {
+        s += "┌";
+      } else {
+        s += "┬";
+        
+      }
+      String padding_string = "%-"+lengths[col][row]+"s";
+      s += String.format(padding_string, numbers[col][row]).replace(' ', '─');
+    }
+    s += "┐\n";
+    
+    //draw name
+    for (int col=0; col < num_columns; col++) {
+      if (numbers[col][row] == -1) continue;
+      String padding_string = "%-"+lengths[col][row]+"s";
+      s += "│" + String.format(padding_string, names[col][row]);
+    }
+    s += "│\n";
+
+    //draw value
+    for (int col=0; col < num_columns; col++) {
+      if (numbers[col][row] == -1) continue;
+      String padding_string = "%-"+lengths[col][row]+"s";
+      s += "│" + String.format(padding_string, values[col][row]);
+    }
+    s += "│\n";
+
+    // draw bottom line
+    for (int col=0; col < num_columns; col++) {
+      if (numbers[col][row] == -1) continue;
+      if (col==0) {
+        s += "└";
+      } else {
+        s += "┴";
+        
+      }
+      String padding_string = "%-"+lengths[col][row]+"s";
+      s += String.format(padding_string, "").replace(' ', '─');
+    }
+    s += "┘\n";
+  }
+  
+  return s;
+}
+
+String buttons_help() {
+  int num_columns = 8, num_rows = 2;
+  int[][] numbers = new int[num_columns][num_rows];
+  String[][] names = new String[num_columns][num_rows];
+  int[][] lengths = new int[num_columns][num_rows];
+  
+  // populate array of strings to show
+  int button_number = 0;
+  for (int row=0; row < num_rows; row ++) {
+    for (int col=0; col < num_columns; col++) {
+      button_number ++;
+      numbers[col][row] = button_number;
+      Button b = buttons[button_number];
+      if (b != null) {
+        names[col][row] = b.get_name();
+      } else {
+        names[col][row] = "";
+      }
+      lengths[col][row] = names[col][row].length();
+    }
+  }
+  // align the lengths of each column in the 2 rows
+  for (int row=0; row < num_rows; row ++) {
+    for (int col=0; col < num_columns; col++) {
+      lengths[col][row] = max(lengths[col][0], lengths[col][1], 2);
+    }
+  }
+
+  String s = "";
+  
+  for (int row=0; row < num_rows; row++) {
+    // draw top line
+    for (int col=0; col < num_columns; col++) {
+      if (col==0) {
+        s += "┌";
+      } else {
+        s += "┬";
+        
+      }
+      String padding_string = "%-"+lengths[col][row]+"s";
+      s += String.format(padding_string, numbers[col][row]).replace(' ', '─');
+    }
+    s += "┐\n";
+    
+    //draw name
+    for (int col=0; col < num_columns; col++) {
+      String padding_string = "%-"+lengths[col][row]+"s";
+      s += "│" + String.format(padding_string, names[col][row]);
+    }
+    s += "│\n";
+
+    // draw bottom line
+    for (int col=0; col < num_columns; col++) {
+      if (col==0) {
+        s += "└";
+      } else {
+        s += "┴";
+        
+      }
+      String padding_string = "%-"+lengths[col][row]+"s";
+      s += String.format(padding_string, "").replace(' ', '─');
+    }
+    s += "┘\n";
+  }
+  
+  return s;
 }
