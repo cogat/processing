@@ -6,5 +6,7 @@ Adapted from https://github.com/kgolid/hedgehog
 
 TODO
 ====
-factor out and incorporate help text + status display
-
+Display count of number of lines
+Check SVG export doesn't contain bg
+Check SVG optimiser works
+Do a plot (brush?)

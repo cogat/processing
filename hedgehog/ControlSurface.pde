@@ -192,7 +192,12 @@ void draw_help(PGraphics g) {
   g.textFont(pFont, 9);
   g.textLeading(9);
   g.textAlign(RIGHT, BOTTOM);
-  String s = knobs_help() + "\n" + buttons_help();
+  String app_help = app_help();
+  if (app_help.length() > 0) {
+    app_help += "\n";
+  }
+  
+  String s = app_help + knobs_help() + "\n" + buttons_help();
   g.text(s, 10, 10, g.width - 20, g.height - 20);
 }
 

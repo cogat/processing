@@ -115,3 +115,7 @@ void save_svg(String filename) {
   svg_graphics.endDraw();
   println("Saved "+filename);
 }
+
+String app_help() {
+  return "lines: " + line_count; 
+}

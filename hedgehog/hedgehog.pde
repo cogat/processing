@@ -4,7 +4,7 @@ import processing.svg.*;
 int size = 720;
 String shape = "circle";
 
-int flow_cell_size = 4;
+int flow_cell_size = 8;
 float hair_length = 2.0;
 
 int vertical_partitions = 2;
@@ -32,6 +32,8 @@ PGraphics default_graphics;
 PGraphics svg_graphics;
 
 PApplet applet;
+
+int line_count;
 
 void setup() {
   applet = this;
@@ -131,6 +133,7 @@ boolean in_mask(int x, int y) {
 }
 
 void display_flow(PGraphics g) {
+  line_count = 0;
   for (int y = 0; y < flow_dim; y++) {
     for (int x = 0; x < flow_dim; x++) {
       if (
@@ -142,6 +145,7 @@ void display_flow(PGraphics g) {
           x * flow_cell_size + flow_grid[y][x].x * hair_length * 2500,
           y * flow_cell_size + flow_grid[y][x].y * hair_length * 2500
         );
+        line_count++;
       }
     }
   }
