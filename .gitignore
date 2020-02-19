@@ -2,6 +2,7 @@ examples
 libraries
 modes
 tools
+*.icloud
 
 */data/*.json
 */data/*.svg
